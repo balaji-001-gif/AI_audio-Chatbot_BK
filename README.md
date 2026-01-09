@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+# ERPNext AI Audio Chat Bot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, high-fidelity AI voice assistant designed to interact with ERPNext's MariaDB database. Ask business questions via voice and get real-time insights from your ERP.
 
-Currently, two official plugins are available:
+## 🚀 Features
+- **Voice-First Experience**: Premium, pulsing UI for intuitive audio interaction.
+- **Smart Data Retrieval**: Uses GPT-4o to generate secure SQL queries against ERPNext tables.
+- **Seamless STT/TTS**: Fast transcription using OpenAI Whisper and clear voice feedback.
+- **Dynamic Data Panel**: Real-time display of the query trace and MariaDB results.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🛠 Project Structure
+- **Frontend**: React + Vite + Framer Motion + Lucide.
+- **Backend**: FastAPI + OpenAI + MySQL Connector.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📦 Local Setup (Standalone)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Backend Setup
+1. Move to the `backend` directory.
+2. Install dependencies:
+   ```bash
+   pip3 install -r requirements.txt
+   ```
+3. Update `.env` with your `OPENAI_API_KEY` and MariaDB credentials:
+   ```env
+   OPENAI_API_KEY=your_key_here
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_NAME=_erpnext_db
+   ```
+4. Start the server:
+   ```bash
+   python3 main.py
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 2. Frontend Setup
+1. In the root directory, install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🏗 ERPNext Site Integration
+
+To integrate this directly into your Frappe/ERPNext site as a custom app:
+
+### 1. Create a Custom Frappe App
+```bash
+bench new-app ai_chatbot
+bench install-app ai_chatbot [your-site-name]
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Move Logic to Frappe API
+In `ai_chatbot/api.py`, wrap the STT and DB logic in a whitelisted function:
+```python
+@frappe.whitelist()
+def process_voice_query():
+    # Use frappe.request.files to get audio
+    # Use frappe.db.sql() for MariaDB access
 ```
+
+### 3. Deploy Frontend Assets
+1. Build the React app: `npm run build`
+2. Copy the `dist` folder contents to your custom app's public folder.
+3. Use a custom Frappe Page to load the assets.
+
+---
+
+## ⚠️ Security Note
+Always use parameterized queries or a validation layer when executing AI-generated SQL. Ensure the database user has limited permissions (ideally read-only for Sales/Purchase tables).
+
+---
+
+## 📄 License
+MIT
