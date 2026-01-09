@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+openai
+mysql-connector-python
+python-multipart
+python-dotenv
